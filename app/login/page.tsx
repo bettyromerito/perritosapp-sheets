@@ -13,8 +13,7 @@ export default function LoginPage() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
-  // ── AUTH-SHEETS: nueva lógica de acceso vía Google Sheets ─────────────────
-  async function handleSendLink(e: React.FormEvent) {
+  async function handleAcceder(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
 
@@ -28,41 +27,16 @@ export default function LoginPage() {
     });
 
     if (res.ok) {
-      router.replace("/");
+      router.push("/dashboard");
     } else {
-      const data = await res.json().catch(() => ({}));
-      setErrorMsg(data.error ?? "Email no autorizado. Contacta al administrador.");
+      setErrorMsg("Este correo no tiene una suscripción activa.");
       setStatus("error");
     }
   }
 
-  // ── CÓDIGO ORIGINAL SUPABASE — NO BORRAR ──────────────────────────────────
-  // Para reactivar: comenta la función de arriba y descomenta la de abajo.
-  // También restaura el import: import { supabase } from "@/utils/supabaseClient";
-  //
-  // async function handleSendLink(e: React.FormEvent) {
-  //   e.preventDefault();
-  //   if (!email) return;
-  //   setStatus("loading");
-  //   setErrorMsg("");
-  //   const redirectTo = `${window.location.origin}/auth/callback`;
-  //   const { error } = await supabase.auth.signInWithOtp({
-  //     email,
-  //     options: { emailRedirectTo: redirectTo },
-  //   });
-  //   if (error) {
-  //     setErrorMsg(error.message);
-  //     setStatus("error");
-  //   } else {
-  //     setStatus("sent");
-  //   }
-  // }
-  // ──────────────────────────────────────────────────────────────────────────
-
   return (
     <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        {/* Logo */}
         <div className="text-center mb-8">
           <span className="text-6xl">🐶</span>
           <h1 className="mt-4 text-2xl font-bold text-amber-800">PetHealth</h1>
@@ -70,7 +44,7 @@ export default function LoginPage() {
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-amber-100 p-8">
-          <form onSubmit={handleSendLink} className="space-y-5">
+          <form onSubmit={handleAcceder} className="space-y-5">
             <div>
               <h2 className="text-lg font-semibold text-gray-800">Acceder</h2>
               <p className="mt-1 text-sm text-gray-500">
@@ -101,7 +75,7 @@ export default function LoginPage() {
               disabled={status === "loading"}
               className="w-full h-10 rounded-lg bg-amber-500 hover:bg-amber-600 disabled:opacity-50 text-white text-sm font-medium transition-colors"
             >
-              {status === "loading" ? "Verificando…" : "Acceder ✉️"}
+              {status === "loading" ? "Verificando…" : "Acceder al Panel 🚀"}
             </button>
           </form>
         </div>
